@@ -20,7 +20,7 @@ class Instructor(models.Model):
     total_learners = models.IntegerField()
 
     def __str__(self):
-        return self.user.username
+        return str(self.user)
 
 
 # Learner model
@@ -48,8 +48,7 @@ class Learner(models.Model):
     social_link = models.URLField(max_length=200)
 
     def __str__(self):
-        return self.user.username + "," + \
-               self.occupation
+        return str(self.user) + "," + self.occupation
 
 
 # Course model
@@ -101,10 +100,22 @@ class Enrollment(models.Model):
     # Has a grade point for each question
     # Has question content
     # Other fields and methods you would like to design
-#class Question(models.Model):
+class Question(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="questions")
+    question_text = models.TextField()
+    grade_point = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return self.question_text    
     # Foreign key to lesson
-    # question text
-    # question grade/mark
+    # Sample is_get_score method, uncomment and modify as needed
+    # def is_get_score(self, selected_ids):
+    #     all_answers = self.choice_set.filter(is_correct=True).count()
+    #     selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
+    #     if all_answers == selected_correct:
+    #         return True
+    #     else:
+    #         return False
 
     # <HINT> A sample model method to calculate if learner get the score of the question
     #def is_get_score(self, selected_ids):
@@ -122,7 +133,13 @@ class Enrollment(models.Model):
     # Choice content
     # Indicate if this choice of the question is a correct one or not
     # Other fields and methods you would like to design
-# class Choice(models.Model):
+class Choice(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="choices")
+    choice_text = models.CharField(max_length=200)
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.choice_text
 
 # <HINT> The submission model
 # One enrollment could have multiple submission
